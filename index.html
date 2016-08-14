@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Billiard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            height: 100%;
+            width: 100%;
+        }
+        canvas {
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="desk"></canvas>
+    <canvas id="playZone"></canvas>
+
+    <!-- 配置文件 -->
+    <script src="./conf.js"></script>
+    <!-- 基类 -->
+    <script src="./Base.js"></script>
+    <!-- 桌球 -->
+    <script src="./Ball.js"></script>
+    <!-- 桌子 -->
+    <script src="./Desk.js"></script>
+    <!-- 球洞 -->
+    <script src="./Hole.js"></script>
+    <!-- 背景 -->
+    <script src="./Background.js"></script>
+    <!-- 物理引擎 -->
+    <script src="./physicsEngine.js"></script>
+    <!-- 程序入口 -->
+    <script src="./billiard.js"></script>
+</body>
+</html>

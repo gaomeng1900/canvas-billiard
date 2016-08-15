@@ -24,7 +24,7 @@ class Base {
         this.dead = false; // 为true证明可以清理了
     }
 
-    move() {
+    move(freq = 1) {
         // 是否可以自由移动
         // if (this.free) {
             // let bounds = this.getBounds();
@@ -51,14 +51,14 @@ class Base {
             //     this.y = this.playYard[1]; // 立刻退回区域内, 暂时不按原路径退回
             // }
             // 加速度
-            this.vx += this.ax;
-            this.vy += this.ay;
+            this.vx += this.ax / freq;
+            this.vy += this.ay / freq;
             // 摩擦力
-            this.vx *= 1 - this.f;
-            this.vy *= 1 - this.f;
+            this.vx *= 1 - this.f / freq;
+            this.vy *= 1 - this.f / freq;
             // 移动
-            this.x += this.vx;
-            this.y += this.vy;
+            this.x += this.vx / freq;
+            this.y += this.vy / freq;
         // }
     }
 

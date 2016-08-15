@@ -19,11 +19,15 @@
             width: 100%;
             height: 100%;
         }
+        #helper {
+            pointer-events:none;
+        }
     </style>
 </head>
 <body>
     <canvas id="desk"></canvas>
     <canvas id="playZone"></canvas>
+    <canvas id="helper"></canvas>
 
     <!-- 配置文件 -->
     <script src="./conf.js"></script>
@@ -31,8 +35,6 @@
     <script src="./Base.js"></script>
     <!-- 桌球 -->
     <script src="./Ball.js"></script>
-    <!-- 桌子 -->
-    <script src="./Desk.js"></script>
     <!-- 球洞 -->
     <script src="./Hole.js"></script>
     <!-- 背景 -->

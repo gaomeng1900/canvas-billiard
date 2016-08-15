@@ -4,13 +4,22 @@
  * @create 2016-08-12
  */
 
+// 游戏图层, 刷新率60Hz (其中辅助线的绘制频率等于物理定律的运行频率, which is 60*SAMSARA_COUNT === 240)
 const canvasZone = document.getElementById('playZone');
 const ctZone     = canvasZone.getContext('2d');
+// 背景图层, 刷新率0
 const canvasDesk = document.getElementById('desk');
 const ctDesk     = canvasDesk.getContext('2d');
+// 辅助线图层, 刷新率与物理定律运行频率相同, 60*SAMSARA_COUNT = 240Hz
+// !! 实测发现这个高刷新率的图层的存在严重影响了整个页面的刷新率
+// !! 物理引擎中主动降频
+// ** 实测又发现, 清空两个同频率图层还不如只维护一个图层性能好.......
+// 暂时弃用
+const canvasHelper = document.getElementById('helper');
+const ctHelper     = canvasHelper.getContext('2d');
 
-canvasZone.width = canvasDesk.width = window.innerWidth;
-canvasZone.height = canvasDesk.height = window.innerHeight;
+canvasZone.width = canvasHelper.width = canvasDesk.width = window.innerWidth;
+canvasZone.height = canvasHelper.height = canvasDesk.height = window.innerHeight;
 
 // 游戏进行状态
 const STATE = {
@@ -52,7 +61,7 @@ for (let i = 0; i < 6; i++) {
 }
 
 // Hand of God !!!
-const hog = new Engine(canvasZone);
+const hog = new Engine(canvasZone, canvasHelper, SAMSARA_COUNT);
 
 // 添加实体
 hog.add(balls);
@@ -71,22 +80,22 @@ hog.addLaw(() => {
 // 添加桌面边缘碰撞规则
 hog.addLaw(() => {
     balls.map(ball => {
-        if (ball.x + ball.vx + ball.radius >= PLAY_ZONE[2]) {
+        if (ball.x + ball.radius >= PLAY_ZONE[2]) {
             ball.vx = -ball.vx * RESTITUTION;
             ball.ax = -ball.ax;
             ball.x = PLAY_ZONE[2] - ball.radius; // 立刻退回区域内, 暂时不按原路径退回
         }
-        if (ball.x + ball.vx - ball.radius <= PLAY_ZONE[0]) {
+        if (ball.x - ball.radius <= PLAY_ZONE[0]) {
             ball.vx = -ball.vx * RESTITUTION;
             ball.ax = -ball.ax;
             ball.x = PLAY_ZONE[0] + ball.radius; // 立刻退回区域内, 暂时不按原路径退回
         }
-        if (ball.y + ball.vy + ball.radius >= PLAY_ZONE[3]) {
+        if (ball.y + ball.radius >= PLAY_ZONE[3]) {
             ball.vy = -ball.vy * RESTITUTION;
             ball.ay = -ball.ay;
             ball.y = PLAY_ZONE[3] - ball.radius; // 立刻退回区域内, 暂时不按原路径退回
         }
-        if (ball.y + ball.vy - ball.radius <= PLAY_ZONE[1]) {
+        if (ball.y - ball.radius <= PLAY_ZONE[1]) {
             ball.vy = -ball.vy * RESTITUTION;
             ball.ay = -ball.ay;
             ball.y = PLAY_ZONE[1] + ball.radius; // 立刻退回区域内, 暂时不按原路径退回
@@ -97,8 +106,8 @@ hog.addLaw(() => {
 // 添加拖拽规则
 hog.addLaw(() => {
     // balls.map(ball => hog.draftSimple(ball));
-    balls.map(ball => hog.draftEase(ball, 0.1, ctZone));
-    // whiteBalls.map(ball => hog.bungee(ball, SHOT_POWER, 270, ctZone));
+    // balls.map(ball => hog.draftEase(ball, 0.1 / SAMSARA_COUNT));
+    whiteBalls.map(ball => hog.bungee(ball, SHOT_POWER, 300));
 })
 
 // 添加进洞规则
@@ -136,9 +145,9 @@ hog.addLaw(() => {
 // 开始运行
 hog.run();
 
-// 桌面
+// 静态背景: 球桌
 const desk = new Background();
 desk.draw(ctDesk);
 
-// 球洞
+// 静态背景: 球洞
 holes.map(hole => hole.draw(ctDesk));
